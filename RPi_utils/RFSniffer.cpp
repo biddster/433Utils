@@ -38,19 +38,13 @@ int main(int argc, char *argv[]) {
         if (value == 0) {
           printf("Unknown encoding\n");
         } else {    
-   
-          printf("Received %i\n", mySwitch.getReceivedValue() );
+          printf("%i\n", mySwitch.getReceivedValue() );
         }
     
+        fflush(stdout);
         mySwitch.resetAvailable();
-    
       }
-      
-  
   }
 
   exit(0);
-
-
 }
-

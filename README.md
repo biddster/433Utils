@@ -1,3 +1,9 @@
+# About this fork
+
+This fork is to capture the changes to RFSniffer so that it can be run as a daemon in a node-red flow. The node-red flow can then respond to the 433MHz code received and do cool stuff. Note that you need compatible hardware attached to your Raspberry Pi in order to be able to receive 433MHz signals.
+
+See here for the origins of these changes [https://groups.google.com/forum/#!searchin/node-red/weather$20433/node-red/7EhmxjwnrOc/7ix9vS_In1gJ]
+
 # About 433Utils
 
 433Kit is a collection of code and documentation designed to assist you in the connection and usage of RF 433MHz transmit and receive modules to/with your Arduino and Rapberry Pi.
