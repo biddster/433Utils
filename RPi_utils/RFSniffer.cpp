@@ -9,11 +9,9 @@
 #include "RCSwitch.h"
 #include <stdlib.h>
 #include <stdio.h>
-     
+#include <unistd.h>
      
 RCSwitch mySwitch;
- 
-
 
 int main(int argc, char *argv[]) {
   
@@ -27,24 +25,20 @@ int main(int argc, char *argv[]) {
 
      mySwitch = RCSwitch();
      mySwitch.enableReceive(PIN);  // Receiver on inerrupt 0 => that is pin #2
-     
     
      while(1) {
-  
       if (mySwitch.available()) {
-    
         int value = mySwitch.getReceivedValue();
-    
         if (value == 0) {
           printf("Unknown encoding\n");
         } else {    
-          printf("%i\n", mySwitch.getReceivedValue() );
+          printf("%i\n", value);
         }
-    
+
         fflush(stdout);
         mySwitch.resetAvailable();
       }
-  }
-
-  exit(0);
+      sleep(1);
+    }
+    exit(0);
 }
