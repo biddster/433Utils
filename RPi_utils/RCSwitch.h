@@ -48,7 +48,8 @@ typedef uint8_t byte;
 
 // Number of maximum High/Low changes per packet.
 // We can handle up to (unsigned long) => 32 bit * 2 H/L changes per bit + 2 for sync
-#define RCSWITCH_MAX_CHANGES 67
+//#define RCSWITCH_MAX_CHANGES 67
+#define RCSWITCH_MAX_CHANGES 104
 
 
 class RCSwitch {
@@ -102,8 +103,10 @@ class RCSwitch {
     static char* dec2binWzerofill(unsigned long dec, unsigned int length);
 
     static void handleInterrupt();
+    static void handleInterrupt1();
 	static bool receiveProtocol1(unsigned int changeCount);
 	static bool receiveProtocol2(unsigned int changeCount);
+	static bool receiveWT450(unsigned int changeCount);
     int nReceiverInterrupt;
     int nTransmitterPin;
     int nPulseLength;

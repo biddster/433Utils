@@ -25,6 +25,7 @@
 */
 
 #include "RCSwitch.h"
+#include <stdio.h>
 
 unsigned long RCSwitch::nReceivedValue = NULL;
 unsigned int RCSwitch::nReceivedBitlength = 0;
@@ -558,7 +559,139 @@ bool RCSwitch::receiveProtocol2(unsigned int changeCount){
 
 }
 
-void RCSwitch::handleInterrupt() {
+bool RCSwitch::receiveWT450(unsigned int changeCount)
+{
+	unsigned long long code = 0ull;
+	unsigned int HighWidth = 2000;
+	unsigned int LowWidth = 1000;
+	unsigned int delayTolerance = 300;
+	unsigned int bitLength=0;
+
+	for (int i = 1; i<changeCount ; i++)
+	{
+		if (RCSwitch::timings[i] > HighWidth-delayTolerance && RCSwitch::timings[i] < HighWidth+delayTolerance)
+		{
+			code = code << 1;
+			bitLength++;
+		}
+		else if ( RCSwitch::timings[i] > LowWidth-delayTolerance && RCSwitch::timings[i] < LowWidth+delayTolerance)
+		{
+			if ( RCSwitch::timings[i+1] > LowWidth-delayTolerance && RCSwitch::timings[i+1] < LowWidth+delayTolerance)
+			{
+				code+=1;
+				code = code << 1;
+				i++;
+				bitLength++;
+			}
+			else
+			{
+				// Failed
+				printf("failed 1\n");
+				i = changeCount;
+			}
+		}
+		else
+		{
+			// Failed
+			i = changeCount;
+			if (i<50)
+			{
+				printf("failed 2\n");
+				code = 0;
+			}
+		}
+
+	}
+
+	code = code >> 1;
+	printf("450 code %d bit length %d\n", code, bitLength);
+	if ((changeCount > 50) && (bitLength==36))
+	{
+		// there is no checksum of this unit, so using preamble and 2 fixed bits to check
+		// Preamble= 1100 (first four bits)
+		if( code & 0xC03000000ull)
+		{
+			RCSwitch::nReceivedValue = code;
+			RCSwitch::nReceivedBitlength = bitLength;
+			RCSwitch::nReceivedDelay = 1000;
+			RCSwitch::nReceivedProtocol = 5;
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
+void RCSwitch::handleInterrupt()
+{
+	//printf("Interrupt\n");
+	static unsigned int duration;
+	static unsigned int changeCount;
+	static unsigned long lastTime;
+	static unsigned int repeatCount;
+
+	long time = micros();
+	duration = time - lastTime;
+//  if (duration > 5000 && duration > RCSwitch::timings[0] - 200 && duration < RCSwitch::timings[0] + 200) {
+	if (duration > 5000 && RCSwitch::timings[0]>5000) 
+	{
+		repeatCount++;
+
+		if ((repeatCount == 1)) 
+		{
+			if(changeCount>20)
+			{
+	//printf("changeCount %d\n", changeCount);
+				if (changeCount>80)
+				{
+					//if (receiveLaCrosse(changeCount) == false)
+					{
+						//failed
+					}
+				}
+				else if (changeCount>50)
+				{
+			//		printf("receive450\n");
+						if (receiveWT450(changeCount) == false)
+						{
+							// failed
+						}
+				}
+				else 
+				{
+					changeCount--;
+					if (receiveProtocol1(changeCount) == false)
+					{
+						//if (receiveProtocol2(changeCount) == false)
+						//{
+					//	}
+					}		
+				}
+			}
+			repeatCount = 0;
+		}
+		changeCount = 0;
+	} 
+	else if (duration > 5000) 
+	{
+		changeCount = 0;
+		repeatCount=0;
+	}
+
+	if (changeCount >= RCSWITCH_MAX_CHANGES) 
+	{
+		changeCount = 0;
+		repeatCount = 0;
+	}
+	RCSwitch::timings[changeCount++] = duration;
+	lastTime = time;
+  
+	fflush(stdout);
+}
+
+void RCSwitch::handleInterrupt1() {
 
   static unsigned int duration;
   static unsigned int changeCount;
@@ -575,7 +708,11 @@ void RCSwitch::handleInterrupt() {
     if (repeatCount == 2) {
                 if (receiveProtocol1(changeCount) == false){
                         if (receiveProtocol2(changeCount) == false){
-                                //failed
+                                if (receiveWT450(changeCount) == false)
+						{
+							printf("Failed to receive\n");
+							// failed
+						}
                         }
                 }
       repeatCount = 0;
