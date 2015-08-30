@@ -22,6 +22,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #ifndef _RCSwitch_h
 #define _RCSwitch_h
 
@@ -52,6 +53,9 @@ typedef uint8_t byte;
 //#define RCSWITCH_MAX_CHANGES 67
 #define RCSWITCH_MAX_CHANGES 104
 
+#ifdef USE_RX_QUEUE
+#pragma "Building RCSwitch with queue support"	
+#endif
 
 class RCSwitch {
 
@@ -88,8 +92,9 @@ class RCSwitch {
     void setReceiveTolerance(int nPercent);
 	void setProtocol(int nProtocol);
 	void setProtocol(int nProtocol, int nPulseLength);
-
-	static Queue<unsigned int> qValues;
+#ifdef USE_RX_QUEUE
+	static unsigned int waitForRx();
+#endif
   private:
     char* getCodeWordB(int nGroupNumber, int nSwitchNumber, boolean bStatus);
     char* getCodeWordA(char* sGroup, int nSwitchNumber, boolean bStatus);
@@ -123,6 +128,9 @@ class RCSwitch {
     static unsigned int timings[RCSWITCH_MAX_CHANGES];
 	
 
+#ifdef USE_RX_QUEUE
+	static Queue<unsigned int> qValues;
+#endif
 
 };
 

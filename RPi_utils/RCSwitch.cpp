@@ -33,7 +33,9 @@ unsigned int RCSwitch::nReceivedDelay = 0;
 unsigned int RCSwitch::nReceivedProtocol = 0;
 unsigned int RCSwitch::timings[RCSWITCH_MAX_CHANGES];
 int RCSwitch::nReceiveTolerance = 60;
+#ifdef USE_RX_QUEUE
 Queue<unsigned int> RCSwitch::qValues;
+#endif
 
 RCSwitch::RCSwitch() {
   this->nReceiverInterrupt = -1;
@@ -519,7 +521,9 @@ bool RCSwitch::receiveProtocol1(unsigned int changeCount){
 	if (code == 0){
 		return false;
 	}else if (code != 0){
-      		qValues.push(code);
+		#ifdef USE_RX_QUEUE      		
+		qValues.push(code);
+		#endif
 		return true;
 	}
 
@@ -556,7 +560,9 @@ RCSwitch::nReceivedValue = code;
 	if (code == 0){
 		return false;
 	}else if (code != 0){
-		qValues.push(code);      
+		#ifdef USE_RX_QUEUE		
+		qValues.push(code);
+		#endif      
 		return true;
 	}
 
@@ -614,7 +620,9 @@ bool RCSwitch::receiveWT450(unsigned int changeCount)
 		// Preamble= 1100 (first four bits)
 		if( code & 0xC03000000ull)
 		{
+#ifdef USE_RX_QUEUE
 			qValues.push(code);
+#endif		
 			RCSwitch::nReceivedValue = code;
 			RCSwitch::nReceivedBitlength = bitLength;
 			RCSwitch::nReceivedDelay = 1000;
@@ -757,3 +765,11 @@ char* RCSwitch::dec2binWzerofill(unsigned long Dec, unsigned int bitLength){
 
   return bin;
 }
+
+#ifdef USE_RX_QUEUE
+unsigned int RCSwitch::waitForRx() {
+	return qValues.pop();
+}
+#endif
+
+

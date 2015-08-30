@@ -1,3 +1,7 @@
+
+CXXFLAGS := -std=c++0x -std=gnu++0x -DUSE_RX_QUEUE=1
+#CXXFLAGS := -std=c++0x -std=gnu++0x
+
 all: send codesend RFSniffer
 
 send: RCSwitch.o send.o
