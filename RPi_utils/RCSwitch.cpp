@@ -586,7 +586,7 @@ bool RCSwitch::receiveWT450(unsigned int changeCount)
 			else
 			{
 				// Failed
-				printf("failed 1\n");
+				//printf("failed 1\n");
 				i = changeCount;
 			}
 		}
@@ -596,7 +596,7 @@ bool RCSwitch::receiveWT450(unsigned int changeCount)
 			i = changeCount;
 			if (i<50)
 			{
-				printf("failed 2\n");
+				//printf("failed 2\n");
 				code = 0;
 			}
 		}
@@ -604,7 +604,7 @@ bool RCSwitch::receiveWT450(unsigned int changeCount)
 	}
 
 	code = code >> 1;
-	printf("450 code %d bit length %d\n", code, bitLength);
+	//printf("450 code %d bit length %d\n", code, bitLength);
 	if ((changeCount > 50) && (bitLength==36))
 	{
 		// there is no checksum of this unit, so using preamble and 2 fixed bits to check
