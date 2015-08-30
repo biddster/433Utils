@@ -676,9 +676,9 @@ void RCSwitch::handleInterrupt()
 					changeCount--;
 					if (receiveProtocol1(changeCount) == false)
 					{
-						//if (receiveProtocol2(changeCount) == false)
-						//{
-					//	}
+						if (receiveProtocol2(changeCount) == false)
+						{
+						}	
 					}		
 				}
 			}
