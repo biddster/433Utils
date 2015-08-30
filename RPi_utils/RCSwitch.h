@@ -53,6 +53,12 @@ typedef uint8_t byte;
 //#define RCSWITCH_MAX_CHANGES 67
 #define RCSWITCH_MAX_CHANGES 104
 
+#define PROTOCOL3_SYNC_FACTOR   71
+#define PROTOCOL3_0_HIGH_CYCLES  4
+#define PROTOCOL3_0_LOW_CYCLES  11
+#define PROTOCOL3_1_HIGH_CYCLES  9
+#define PROTOCOL3_1_LOW_CYCLES   6
+
 #ifdef USE_RX_QUEUE
 #pragma "Building RCSwitch with queue support"	
 #endif
@@ -113,6 +119,7 @@ class RCSwitch {
     static void handleInterrupt1();
 	static bool receiveProtocol1(unsigned int changeCount);
 	static bool receiveProtocol2(unsigned int changeCount);
+    static bool receiveProtocol3(unsigned int changeCount);
 	static bool receiveWT450(unsigned int changeCount);
     int nReceiverInterrupt;
     int nTransmitterPin;
