@@ -27,17 +27,19 @@ int main(int argc, char *argv[]) {
      mySwitch.enableReceive(PIN);  // Receiver on inerrupt 0 => that is pin #2
     
      while(1) {
-      if (mySwitch.available()) {
+      /*if (mySwitch.available()) {
         int value = mySwitch.getReceivedValue();
         if (value == 0) {
           printf("Unknown encoding\n");
         } else {    
           printf("%i\n", value);
         }
-
+*/
+	unsigned int value = mySwitch.qValues.pop();
+          printf("%i\n", value);
         fflush(stdout);
         mySwitch.resetAvailable();
-      }
+      //}
 //      usleep(250);
     }
     exit(0);

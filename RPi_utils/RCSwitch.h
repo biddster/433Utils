@@ -45,6 +45,7 @@ typedef uint8_t byte;
 #endif
 #endif
 
+#include "Queue.h"
 
 // Number of maximum High/Low changes per packet.
 // We can handle up to (unsigned long) => 32 bit * 2 H/L changes per bit + 2 for sync
@@ -88,6 +89,7 @@ class RCSwitch {
 	void setProtocol(int nProtocol);
 	void setProtocol(int nProtocol, int nPulseLength);
 
+	static Queue<unsigned int> qValues;
   private:
     char* getCodeWordB(int nGroupNumber, int nSwitchNumber, boolean bStatus);
     char* getCodeWordA(char* sGroup, int nSwitchNumber, boolean bStatus);
@@ -119,6 +121,7 @@ class RCSwitch {
 	static unsigned int nReceivedDelay;
 	static unsigned int nReceivedProtocol;
     static unsigned int timings[RCSWITCH_MAX_CHANGES];
+	
 
 
 };

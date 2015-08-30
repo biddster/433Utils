@@ -33,6 +33,7 @@ unsigned int RCSwitch::nReceivedDelay = 0;
 unsigned int RCSwitch::nReceivedProtocol = 0;
 unsigned int RCSwitch::timings[RCSWITCH_MAX_CHANGES];
 int RCSwitch::nReceiveTolerance = 60;
+Queue<unsigned int> RCSwitch::qValues;
 
 RCSwitch::RCSwitch() {
   this->nReceiverInterrupt = -1;
@@ -509,7 +510,7 @@ bool RCSwitch::receiveProtocol1(unsigned int changeCount){
       }
       code = code >> 1;
     if (changeCount > 6) {    // ignore < 4bit values as there are no devices sending 4bit values => noise
-      RCSwitch::nReceivedValue = code;
+	RCSwitch::nReceivedValue = code;
       RCSwitch::nReceivedBitlength = changeCount / 2;
       RCSwitch::nReceivedDelay = delay;
 	  RCSwitch::nReceivedProtocol = 1;
@@ -518,6 +519,7 @@ bool RCSwitch::receiveProtocol1(unsigned int changeCount){
 	if (code == 0){
 		return false;
 	}else if (code != 0){
+      		qValues.push(code);
 		return true;
 	}
 
@@ -545,7 +547,7 @@ bool RCSwitch::receiveProtocol2(unsigned int changeCount){
       }
       code = code >> 1;
     if (changeCount > 6) {    // ignore < 4bit values as there are no devices sending 4bit values => noise
-      RCSwitch::nReceivedValue = code;
+RCSwitch::nReceivedValue = code;
       RCSwitch::nReceivedBitlength = changeCount / 2;
       RCSwitch::nReceivedDelay = delay;
 	  RCSwitch::nReceivedProtocol = 2;
@@ -554,6 +556,7 @@ bool RCSwitch::receiveProtocol2(unsigned int changeCount){
 	if (code == 0){
 		return false;
 	}else if (code != 0){
+		qValues.push(code);      
 		return true;
 	}
 
@@ -611,6 +614,7 @@ bool RCSwitch::receiveWT450(unsigned int changeCount)
 		// Preamble= 1100 (first four bits)
 		if( code & 0xC03000000ull)
 		{
+			qValues.push(code);
 			RCSwitch::nReceivedValue = code;
 			RCSwitch::nReceivedBitlength = bitLength;
 			RCSwitch::nReceivedDelay = 1000;
