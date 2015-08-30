@@ -4,6 +4,10 @@ This fork is to capture the changes to RFSniffer so that it can be run as a daem
 
 See here for the origins of these changes [https://groups.google.com/forum/#!searchin/node-red/weather$20433/node-red/7EhmxjwnrOc/7ix9vS_In1gJ]
 
+I've also attempted to merge the various updates to RCSwitch, such as the changes made for NinjaBlocks (WT450 support) etc. Whilst this all compiles, I don't have the hardware to test if it actually works.
+
+Additionally, I've modified RFSniffer and RCSwitch to use a proper thread-safe queue rather than a hard loop when receiving 433 input. This stops RFSniffer running at nearly 100% cpu and gets it down to about 30% on my rp1b.
+
 # About 433Utils
 
 433Kit is a collection of code and documentation designed to assist you in the connection and usage of RF 433MHz transmit and receive modules to/with your Arduino and Rapberry Pi.
